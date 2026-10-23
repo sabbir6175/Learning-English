@@ -1,0 +1,90 @@
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Bricolage Grotesque", "Hind Siliguri", system-ui, sans-serif;
+  --font-sans: "Figtree", "Hind Siliguri", system-ui, sans-serif;
+
+  --color-ink-50: #f4f7f3;
+  --color-ink-100: #e5ebe4;
+  --color-ink-200: #d1dbd2;
+  --color-ink-300: #a3b0a5;
+  --color-ink-500: #5c6d61;
+  --color-ink-700: #35483c;
+  --color-ink-900: #1b2c22;
+  --color-ink-950: #112018;
+
+  --color-brand-50: #e9f4ed;
+  --color-brand-100: #d3e9da;
+  --color-brand-200: #b0d6bf;
+  --color-brand-300: #83bd9b;
+  --color-brand-400: #4a9b70;
+  --color-brand-500: #237653;
+  --color-brand-600: #1a6445;
+  --color-brand-700: #155238;
+  --color-brand-800: #13432f;
+  --color-brand-900: #103726;
+
+  --color-mint-50: #e8f5ef;
+  --color-mint-500: #378b69;
+  --color-mint-600: #287452;
+  --color-mint-700: #1e5d42;
+
+  --color-sun-50: #fff4e7;
+  --color-sun-400: #f4b14c;
+  --color-sun-500: #dc8e2d;
+  --color-sun-700: #8f521e;
+}
+
+@layer base {
+  html { scroll-behavior: smooth; }
+  body {
+    @apply bg-ink-50 font-sans text-ink-900 antialiased;
+    font-feature-settings: "ss01";
+  }
+  h1, h2, h3 { @apply font-display tracking-tight; }
+  :focus-visible { @apply outline-2 outline-offset-2 outline-brand-500; }
+  ::selection { @apply bg-brand-200; }
+}
+
+@layer utilities {
+  .accent-coral { color: #c65f49; }
+  .bg-coral-soft { background-color: #fff0eb; }
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --color-ink-50: #101915;
+  --color-ink-100: #18231c;
+  --color-ink-200: #2b3930;
+  --color-ink-300: #809287;
+  --color-ink-500: #a6b5aa;
+  --color-ink-700: #c8d5cb;
+  --color-ink-900: #e6eee8;
+  --color-ink-950: #f5faf6;
+  --color-brand-50: #16291e;
+  --color-brand-100: #21392a;
+  --color-brand-200: #2a5038;
+  --color-brand-300: #3d7250;
+  --color-brand-400: #5b966d;
+  --color-brand-500: #237653;
+  --color-brand-600: #1a6445;
+  --color-brand-700: #9bd0ac;
+  --color-brand-800: #b7ddc4;
+  --color-brand-900: #d8efdf;
+  --color-mint-50: #16291e;
+  --color-sun-50: #302719;
+  --color-sun-700: #f0bd75;
+}
+
+:root[data-theme="dark"] body { background-color: #101915; }
+:root[data-theme="dark"] .bg-white { background-color: #1e2b23; }
+:root[data-theme="dark"] .bg-white\/95 { background-color: rgb(30 43 35 / 95%); }
+:root[data-theme="dark"] .bg-brand-900 { background-color: #103726; }
+:root[data-theme="dark"] .bg-brand-700 { background-color: #155238; }
+:root[data-theme="dark"] .bg-brand-800 { background-color: #13432f; }
+:root[data-theme="dark"] .bg-coral-soft { background-color: #33231e; }
+:root[data-theme="dark"] .accent-coral { color: #f0a28b; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}
