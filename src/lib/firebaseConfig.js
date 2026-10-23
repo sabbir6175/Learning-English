@@ -2,10 +2,12 @@ const config = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
   projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
 }
 
-const requiredConfig = Object.values(config)
+const requiredConfig = [config.apiKey, config.authDomain, config.projectId, config.appId]
 const configuredValues = [...requiredConfig, import.meta.env.VITE_ADMIN_EMAIL]
 export const firebaseConfigured = requiredConfig.every(Boolean) && Boolean(import.meta.env.VITE_ADMIN_EMAIL)
 export const firebaseConfigIncomplete = configuredValues.some(Boolean) && !firebaseConfigured

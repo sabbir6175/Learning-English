@@ -405,6 +405,23 @@ export default function AdminDashboard() {
               </button>
             </form>
           )}
+          {!needsConfig && cloudError && (
+            <div role="alert" className="md:col-span-2 rounded-2xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-800">
+              <strong className="flex items-center gap-2"><CloudOff className="size-4" /> Firestore is not ready</strong>
+              <p className="mt-1">{cloudError}</p>
+              <p className="mt-2">In Firebase Console, create the project’s default Firestore database, then publish the included <code>firestore.rules</code>. Enable Email/Password in Authentication and create/verify the administrator account before signing in.</p>
+            </div>
+          )}
+          {!needsConfig && (
+            <div className="md:col-span-2 rounded-2xl border border-ink-200 bg-white p-5 text-sm leading-relaxed text-ink-600">
+              <h2 className="font-bold text-ink-900">Finish Firebase Console setup</h2>
+              <ol className="mt-2 list-inside list-decimal space-y-1.5">
+                <li>For <code>learning-english-b37dd</code>, create the default Cloud Firestore database.</li>
+                <li>In Authentication, enable Email/Password and create and verify <code>{adminEmail}</code>.</li>
+                <li>Publish this project’s <code>firestore.rules</code> so only that verified admin can write.</li>
+              </ol>
+            </div>
+          )}
           {needsConfig && firebaseConfigIncomplete && <p role="alert" className="md:col-span-2 rounded-xl bg-rose-50 p-3 text-sm text-rose-700">Firebase settings are incomplete. Fill all required values in <code>.env.local</code>, then restart the dev server.</p>}
           {!authReady && <p className="md:col-span-2 text-center text-sm text-ink-500">Connecting securely to Firebase…</p>}
         </main>

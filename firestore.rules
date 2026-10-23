@@ -6,7 +6,7 @@ service cloud.firestore {
       allow read: if true;
       allow write: if request.auth != null
         && request.auth.token.email_verified == true
-        && request.auth.token.email == 'REPLACE_WITH_ADMIN_EMAIL';
+        && request.auth.token.email == 'sabbirhasannahid6175@gmail.com';
     }
   }
 }

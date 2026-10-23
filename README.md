@@ -19,9 +19,11 @@ Content edits are saved in this browser's local storage while you work. Select *
 
 ### Firebase setup
 
-1. Create a Firebase project, add a Web app, enable Email/Password sign-in, and create and verify the administrator account.
-2. Create a Firestore database and deploy the rules in `firestore.rules`. Replace `REPLACE_WITH_ADMIN_EMAIL` with the administrator's verified email before deployment.
-3. Copy `.env.example` to `.env.local`, fill in the Firebase Web app values and `VITE_ADMIN_EMAIL`, then restart the dev server.
+1. In Firebase Console → Authentication → Sign-in method, enable **Email/Password** and **Google**.
+2. Add the local development host (for example, `127.0.0.1`) and your deployed website host under Authentication → Settings → Authorized domains.
+3. Create and verify the administrator account. Google/email accounts can sign into `/account`; only the configured admin email can publish site content.
+4. Create a Firestore database and deploy the rules in `firestore.rules`. Set the administrator's verified email in the write rule before deployment.
+5. Copy `.env.example` to `.env.local`, fill in the Firebase Web app values and `VITE_ADMIN_EMAIL`, then restart the dev server.
 
 The Firebase Web app configuration is public client configuration; never put a Firebase Service Account key in this frontend. Firestore rules allow public reads for learner content and restrict writes to the verified administrator account.
 
