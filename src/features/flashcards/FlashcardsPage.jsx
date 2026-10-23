@@ -1,8 +1,9 @@
 import { useMemo, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Check, RotateCcw, Repeat } from 'lucide-react'
-import { ALL_LESSONS, LEVELS } from '@/lib/curriculum'
+import { getAllLessons } from '@/lib/curriculum'
 import { useProgress } from '@/store/useProgress'
+import { useSiteContent } from '@/store/useSiteContent'
 import { Button } from '@/components/ui/Button'
 import { ProgressBar } from '@/components/ui/ProgressBar'
 import { SpeakButton } from '@/components/SpeakButton'
@@ -11,17 +12,19 @@ import { cn } from '@/lib/cn'
 
 export default function FlashcardsPage() {
   const completed = useProgress((s) => s.completed)
+  const levels = useSiteContent((s) => s.levels)
+  const lessons = useMemo(() => getAllLessons(levels), [levels])
   const [levelId, setLevelId] = useState('all')
   const [round, setRound] = useState(0)
 
   const pool = useMemo(
-    () => ALL_LESSONS.filter((l) => completed[l.id] && (levelId === 'all' || l.levelId === levelId)).flatMap((l) => l.vocab),
-    [completed, levelId]
+    () => lessons.filter((lesson) => completed[lesson.id] && (levelId === 'all' || lesson.levelId === levelId)).flatMap((lesson) => lesson.vocab),
+    [lessons, completed, levelId]
   )
   const deck = useMemo(() => shuffle(pool), [pool, round]) // eslint-disable-line react-hooks/exhaustive-deps
-  const available = LEVELS.filter((lv) => lv.lessons.some((l) => completed[l.id]))
+  const available = levels.filter((level) => level.lessons.some((lesson) => completed[lesson.id]))
 
-  if (!ALL_LESSONS.some((l) => completed[l.id])) {
+  if (!lessons.some((lesson) => completed[lesson.id])) {
     return (
       <div className="mx-auto max-w-md py-16 text-center">
         <h1 className="text-3xl font-extrabold">No cards yet</h1>

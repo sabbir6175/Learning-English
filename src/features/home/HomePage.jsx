@@ -2,7 +2,8 @@ import { ArrowRight, BookA, BookOpen, BriefcaseBusiness, Languages, PenLine, Pla
 import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/Button'
 import { useProgress } from '@/store/useProgress'
-import { getNextLesson, ALL_LESSONS, totalWords } from '@/lib/curriculum'
+import { getNextLesson, getAllLessons, totalWords } from '@/lib/curriculum'
+import { useSiteContent } from '@/store/useSiteContent'
 
 const path = [
   { to: '/levels', icon: BookOpen, title: '১. সহজ শব্দ', detail: 'Hello, name, family, work', accent: 'bg-brand-50 text-brand-700' },
@@ -23,7 +24,9 @@ const sections = [
 
 export default function HomePage() {
   const completed = useProgress((s) => s.completed)
-  const next = getNextLesson(completed)
+  const levels = useSiteContent((s) => s.levels)
+  const lessons = getAllLessons(levels)
+  const next = getNextLesson(completed, levels)
   const doneCount = Object.keys(completed).length
   const started = doneCount > 0
 
@@ -40,7 +43,7 @@ export default function HomePage() {
               {next ? <Button to={`/lesson/${next.id}`} size="lg">{started ? 'শেখা চালিয়ে যান' : 'প্রথম পাঠ শুরু করুন'} <ArrowRight className="size-5" /></Button> : <Button to="/progress" size="lg">অগ্রগতি দেখুন <ArrowRight className="size-5" /></Button>}
               <Button to="/roadmap" variant="secondary" size="lg"><Route className="size-4" /> পুরো পথ দেখুন</Button>
             </div>
-            <p className="mt-6 text-sm text-brand-100">{ALL_LESSONS.length}টি পাঠ <span className="px-1 text-sun-400">·</span> {totalWords()}টি শব্দ <span className="px-1 text-sun-400">·</span> {doneCount}টি শেষ</p>
+            <p className="mt-6 text-sm text-brand-100">{lessons.length}টি পাঠ <span className="px-1 text-sun-400">·</span> {totalWords(levels)}টি শব্দ <span className="px-1 text-sun-400">·</span> {doneCount}টি শেষ</p>
           </div>
           <div className="mx-auto w-full max-w-md border-l border-white/25 py-2 pl-5 sm:pl-7"><p className="text-sm font-bold text-sun-400">প্রতিদিন ১৫ মিনিট</p><div className="mt-4 space-y-4">{[['৫ মিনিট', 'নতুন শব্দ পড়ুন'], ['৫ মিনিট', 'শুনে জোরে বলুন'], ['৫ মিনিট', 'নিজের বাক্য বানান']].map(([time, task], index) => <div key={`${time}-${index}`} className="flex items-baseline gap-3"><span className="w-16 shrink-0 text-sm font-bold text-brand-100">{time}</span><p className="font-semibold">{task}</p></div>)}</div><Link to="/roadmap" className="mt-6 inline-flex items-center gap-2 text-sm font-bold text-white underline decoration-white/40 underline-offset-4">পুরো শেখার পথ <ArrowRight className="size-4" /></Link></div>
         </div>

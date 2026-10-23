@@ -6,7 +6,7 @@
  *  - layout: 'focus' -> full-screen page without navbar (e.g. lessons)
  */
 import { lazy } from 'react'
-import { Home, Layers, GalleryVerticalEnd, BarChart3, BookOpen, BookA, Languages, PenLine, PlayCircle, CircleUserRound, Route, BriefcaseBusiness } from 'lucide-react'
+import { Home, Layers, GalleryVerticalEnd, BarChart3, BookOpen, BookA, Languages, PenLine, PlayCircle, CircleUserRound, Route, BriefcaseBusiness, LayoutDashboard } from 'lucide-react'
 
 export const features = [
   { id: 'home', path: '/', label: 'Home', icon: Home, nav: true, Component: lazy(() => import('@/features/home/HomePage')) },
@@ -22,5 +22,6 @@ export const features = [
   { id: 'sentences', path: '/sentences', label: 'Sentence builder', icon: PenLine, nav: false, Component: lazy(() => import('@/features/sentences/SentencesPage')) },
   { id: 'videos', path: '/videos', label: 'Videos', icon: PlayCircle, nav: false, Component: lazy(() => import('@/features/videos/VideosPage')) },
   { id: 'account', path: '/account', label: 'Log in', icon: CircleUserRound, nav: false, layout: 'focus', Component: lazy(() => import('@/features/account/AccountPage')) },
+  { id: 'dashboard', path: '/dashboard', label: 'Content dashboard', icon: LayoutDashboard, nav: false, layout: 'focus', Component: lazy(() => import('@/features/admin/AdminDashboard')) },
   { id: 'lesson', path: '/lesson/:lessonId', layout: 'focus', Component: lazy(() => import('@/features/lesson/LessonPage')) },
 ]

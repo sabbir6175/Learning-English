@@ -1,21 +1,23 @@
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Lock, ArrowRight } from 'lucide-react'
-import { LEVELS, levelProgress, isLevelUnlocked } from '@/lib/curriculum'
+import { levelProgress, isLevelUnlocked } from '@/lib/curriculum'
 import { useProgress } from '@/store/useProgress'
+import { useSiteContent } from '@/store/useSiteContent'
 import { Card } from '@/components/ui/Card'
 import { ProgressBar } from '@/components/ui/ProgressBar'
 import { cn } from '@/lib/cn'
 
 export default function LevelsPage() {
   const completed = useProgress((s) => s.completed)
+  const levels = useSiteContent((s) => s.levels)
   return (
     <div>
       <h1 className="text-3xl font-extrabold sm:text-4xl">Choose your step</h1>
       <p className="mt-2 text-ink-500">ধাপে ধাপে এগিয়ে যান। একটি লেভেল শেষ করলে পরেরটি খুলে যাবে।</p>
       <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {LEVELS.map((level, i) => {
-          const unlocked = isLevelUnlocked(level, completed)
+        {levels.map((level, i) => {
+          const unlocked = isLevelUnlocked(level, completed, levels)
           const p = levelProgress(level, completed)
           const body = (
             <Card className={cn('flex h-full flex-col p-6 transition-all', unlocked ? 'hover:-translate-y-0.5 hover:border-brand-300 hover:shadow-md' : 'opacity-60')}>

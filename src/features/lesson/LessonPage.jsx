@@ -1,8 +1,9 @@
 import { useMemo, useState } from 'react'
 import { Link, Navigate, useParams } from 'react-router-dom'
 import { X } from 'lucide-react'
-import { getLesson, getLevel, isLessonUnlocked } from '@/lib/curriculum'
+import { isLessonUnlocked } from '@/lib/curriculum'
 import { useProgress } from '@/store/useProgress'
+import { useSiteContent } from '@/store/useSiteContent'
 import { ProgressBar } from '@/components/ui/ProgressBar'
 import { BnToggle } from '@/components/BnToggle'
 import { stopSpeaking } from '@/lib/speech'
@@ -13,16 +14,19 @@ import { ResultStep } from './ResultStep'
 
 export default function LessonPage() {
   const { lessonId } = useParams()
-  const lesson = getLesson(lessonId)
+  const levels = useSiteContent((state) => state.levels)
+  const level = levels.find((item) => item.lessons.some((lesson) => lesson.id === lessonId && lesson.published !== false))
+  const lesson = level?.lessons.find((item) => item.id === lessonId)
+  const lessonWithLevel = lesson ? { ...lesson, levelId: level.id } : null
   const completed = useProgress((s) => s.completed)
-  if (!lesson) return <Navigate to="/levels" replace />
-  if (!isLessonUnlocked(lesson.id, completed)) return <Navigate to={`/levels/${lesson.levelId}`} replace />
+  if (!lessonWithLevel) return <Navigate to="/levels" replace />
+  if (!isLessonUnlocked(lessonWithLevel.id, completed, levels)) return <Navigate to={`/levels/${lessonWithLevel.levelId}`} replace />
   // key resets all lesson state when navigating lesson -> next lesson
-  return <LessonFlow key={lesson.id} lesson={lesson} />
+  return <LessonFlow key={lessonWithLevel.id} lesson={lessonWithLevel} levels={levels} />
 }
 
-function LessonFlow({ lesson }) {
-  const level = getLevel(lesson.levelId)
+function LessonFlow({ lesson, levels }) {
+  const level = levels.find((item) => item.id === lesson.levelId)
   const [phase, setPhase] = useState('learn') // learn | practice | result
   const [attempt, setAttempt] = useState(0)
   const [learnIdx, setLearnIdx] = useState(0)

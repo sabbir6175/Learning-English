@@ -1,24 +1,36 @@
-import { LEVELS } from '@/data/curriculum'
 import { SEQUENTIAL_UNLOCK } from '@/config'
+import { useSiteContent } from '@/store/useSiteContent'
 
-export { LEVELS }
-export const ALL_LESSONS = LEVELS.flatMap((l) => l.lessons.map((ls) => ({ ...ls, levelId: l.id })))
-export const getLevel = (id) => LEVELS.find((l) => l.id === id)
-export const getLesson = (id) => ALL_LESSONS.find((l) => l.id === id)
+export const getLevels = () => useSiteContent.getState().levels
+export const getAllLessons = (levels = getLevels()) =>
+  levels.flatMap((level) => level.lessons
+    .filter((lesson) => lesson.published !== false)
+    .map((lesson) => ({ ...lesson, levelId: level.id })))
+export const getLevel = (id, levels = getLevels()) => levels.find((level) => level.id === id)
+export const getLesson = (id, levels = getLevels()) =>
+  getAllLessons(levels).find((lesson) => lesson.id === id)
 
-export const isLessonUnlocked = (id, completed) => {
+export const isLessonUnlocked = (id, completed, levels = getLevels()) => {
   if (!SEQUENTIAL_UNLOCK) return true
-  const i = ALL_LESSONS.findIndex((l) => l.id === id)
-  return i <= 0 || !!completed[ALL_LESSONS[i - 1].id]
+  const lessons = getAllLessons(levels)
+  const i = lessons.findIndex((lesson) => lesson.id === id)
+  return i <= 0 || !!completed[lessons[i - 1].id]
 }
-export const isLevelUnlocked = (level, completed) => isLessonUnlocked(level.lessons[0].id, completed)
-export const getNextLesson = (completed) => ALL_LESSONS.find((l) => !completed[l.id]) ?? null
-export const getFollowingLesson = (id) => {
-  const i = ALL_LESSONS.findIndex((l) => l.id === id)
-  return ALL_LESSONS[i + 1] ?? null
+export const isLevelUnlocked = (level, completed, levels = getLevels()) =>
+  !level.lessons.some((lesson) => lesson.published !== false)
+    || isLessonUnlocked(level.lessons.find((lesson) => lesson.published !== false).id, completed, levels)
+export const getNextLesson = (completed, levels = getLevels()) =>
+  getAllLessons(levels).find((lesson) => !completed[lesson.id]) ?? null
+export const getFollowingLesson = (id, levels = getLevels()) => {
+  const lessons = getAllLessons(levels)
+  const i = lessons.findIndex((lesson) => lesson.id === id)
+  return lessons[i + 1] ?? null
 }
 export const levelProgress = (level, completed) => {
-  const done = level.lessons.filter((l) => completed[l.id]).length
-  return { done, total: level.lessons.length, pct: done / level.lessons.length }
+  const lessons = level.lessons.filter((lesson) => lesson.published !== false)
+  const done = lessons.filter((lesson) => completed[lesson.id]).length
+  const total = lessons.length
+  return { done, total, pct: total ? done / total : 0 }
 }
-export const totalWords = () => ALL_LESSONS.reduce((n, l) => n + l.vocab.length, 0)
+export const totalWords = (levels = getLevels()) =>
+  getAllLessons(levels).reduce((total, lesson) => total + lesson.vocab.length, 0)

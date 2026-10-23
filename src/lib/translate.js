@@ -1,4 +1,4 @@
-import { ALL_LESSONS } from './curriculum'
+import { getAllLessons } from './curriculum'
 
 const commonWords = {
   a: 'একটি', an: 'একটি', the: 'টি', i: 'আমি', you: 'তুমি', he: 'সে', she: 'সে', we: 'আমরা', they: 'তারা', it: 'এটি',
@@ -9,11 +9,6 @@ const commonWords = {
   water: 'পানি', book: 'বই', english: 'ইংরেজি', bangla: 'বাংলা', today: 'আজ', tomorrow: 'আগামীকাল', every: 'প্রতি', day: 'দিন',
   good: 'ভালো', morning: 'সকাল', name: 'নাম', friend: 'বন্ধু', family: 'পরিবার', learn: 'শেখা', study: 'পড়াশোনা করা',
 }
-
-export const wordTranslations = new Map([
-  ...Object.entries(commonWords),
-  ...ALL_LESSONS.flatMap((lesson) => lesson.vocab.map(({ w, bn }) => [w.toLowerCase(), bn])),
-])
 
 const phraseTranslations = {
   'how are you': 'আপনি কেমন আছেন', 'i am fine': 'আমি ভালো আছি', 'what is your name': 'আপনার নাম কী',
@@ -33,6 +28,10 @@ export function translateEnglishToBangla(input) {
   const exactPhrase = phraseTranslations[normalized]
   if (exactPhrase) return { text: exactPhrase, unknown: [] }
 
+  const wordTranslations = new Map([
+    ...Object.entries(commonWords),
+    ...getAllLessons().flatMap((lesson) => lesson.vocab.map(({ w, bn }) => [w.toLowerCase(), bn])),
+  ])
   const unknown = new Set()
   const translated = text.replace(/[A-Za-z]+(?:'[A-Za-z]+)?/g, (word) => {
     const meaning = wordTranslations.get(word.toLowerCase())

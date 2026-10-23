@@ -1,33 +1,34 @@
 import { motion, useReducedMotion } from 'framer-motion'
-import { LEVELS } from '@/lib/curriculum'
+import { useSiteContent } from '@/store/useSiteContent'
 
-const heights = [24, 36, 48, 60, 72, 84] // % of container
 const tones = [
   'bg-brand-100 text-brand-800', 'bg-brand-200 text-brand-800', 'bg-brand-300 text-brand-900',
   'bg-brand-400 text-white', 'bg-brand-500 text-white', 'bg-brand-700 text-white',
 ]
 
-// Build keyframes so the dot hops from step to step, once, after the steps have risen.
-const n = LEVELS.length
-const left = [], bottom = []
-for (let i = 0; i < n; i++) {
-  left.push(((i + 0.5) * 100) / n)
-  bottom.push(heights[i] + 2)
-  if (i < n - 1) {
-    left.push(((i + 1) * 100) / n)
-    bottom.push(Math.max(heights[i], heights[i + 1]) + 12)
-  }
-}
-
 export function StairsHero() {
   const reduce = useReducedMotion()
+  const levels = useSiteContent((state) => state.levels)
+  const heights = levels.map((_, index) => Math.min(84, 24 + index * 12))
+  const left = []
+  const bottom = []
+  levels.forEach((_, index) => {
+    left.push(((index + 0.5) * 100) / levels.length)
+    bottom.push(heights[index] + 2)
+    if (index < levels.length - 1) {
+      left.push(((index + 1) * 100) / levels.length)
+      bottom.push(Math.max(heights[index], heights[index + 1]) + 12)
+    }
+  })
+  if (!levels.length) return null
+
   return (
-    <div className="relative mx-auto aspect-[5/4] w-full max-w-lg" role="img" aria-label="Six steps from A1 Beginner up to C2 Mastery">
+    <div className="relative mx-auto aspect-[5/4] w-full max-w-lg" role="img" aria-label={`${levels.length} learning levels`}>
       <div className="absolute inset-0 flex items-end gap-1.5">
-        {LEVELS.map((l, i) => (
+        {levels.map((l, i) => (
           <motion.div
             key={l.id}
-            className={`flex flex-1 origin-bottom flex-col justify-end rounded-t-2xl p-2 pb-3 ${tones[i]}`}
+            className={`flex flex-1 origin-bottom flex-col justify-end rounded-t-2xl p-2 pb-3 ${tones[i % tones.length]}`}
             style={{ height: `${heights[i]}%` }}
             initial={reduce ? false : { scaleY: 0 }}
             animate={{ scaleY: 1 }}

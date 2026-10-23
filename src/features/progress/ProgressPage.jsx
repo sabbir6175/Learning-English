@@ -1,18 +1,21 @@
 import { Flame, Zap, BookCheck, Languages } from 'lucide-react'
-import { LEVELS, levelProgress, ALL_LESSONS, totalWords } from '@/lib/curriculum'
+import { levelProgress, getAllLessons, totalWords } from '@/lib/curriculum'
 import { useProgress } from '@/store/useProgress'
+import { useSiteContent } from '@/store/useSiteContent'
 import { Card } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { ProgressBar } from '@/components/ui/ProgressBar'
 
 export default function ProgressPage() {
   const { xp, streak, completed, knownWords, reset } = useProgress()
+  const levels = useSiteContent((s) => s.levels)
+  const lessons = getAllLessons(levels)
   const doneLessons = Object.keys(completed).length
   const stats = [
     { icon: Zap, label: 'Total XP', value: xp, tone: 'bg-brand-50 text-brand-600' },
     { icon: Flame, label: 'Day streak', value: streak, tone: 'bg-sun-50 text-sun-500' },
-    { icon: BookCheck, label: 'Lessons done', value: `${doneLessons}/${ALL_LESSONS.length}`, tone: 'bg-mint-50 text-mint-600' },
-    { icon: Languages, label: 'Words known', value: `${knownWords.length}/${totalWords()}`, tone: 'bg-ink-100 text-ink-700' },
+    { icon: BookCheck, label: 'Lessons done', value: `${doneLessons}/${lessons.length}`, tone: 'bg-mint-50 text-mint-600' },
+    { icon: Languages, label: 'Words known', value: `${knownWords.length}/${totalWords(levels)}`, tone: 'bg-ink-100 text-ink-700' },
   ]
   return (
     <div>
@@ -31,7 +34,7 @@ export default function ProgressPage() {
 
       <h2 className="mt-12 text-xl font-bold">Level by level</h2>
       <Card className="mt-4 divide-y divide-ink-100">
-        {LEVELS.map((lv) => {
+        {levels.map((lv) => {
           const p = levelProgress(lv, completed)
           return (
             <div key={lv.id} className="flex items-center gap-4 p-4 sm:p-5">

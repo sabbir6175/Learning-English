@@ -1,12 +1,14 @@
 import { Link, Navigate, useParams } from 'react-router-dom'
 import { ChevronLeft, Check, Lock, Play, Star } from 'lucide-react'
-import { getLevel, isLessonUnlocked } from '@/lib/curriculum'
+import { isLessonUnlocked } from '@/lib/curriculum'
 import { useProgress } from '@/store/useProgress'
+import { useSiteContent } from '@/store/useSiteContent'
 import { cn } from '@/lib/cn'
 
 export default function LevelPage() {
   const { levelId } = useParams()
-  const level = getLevel(levelId)
+  const levels = useSiteContent((s) => s.levels)
+  const level = levels.find((item) => item.id === levelId)
   const completed = useProgress((s) => s.completed)
   const showBn = useProgress((s) => s.showBn)
   if (!level) return <Navigate to="/levels" replace />
@@ -23,8 +25,8 @@ export default function LevelPage() {
       </div>
 
       <ol className="mt-10 space-y-3">
-        {level.lessons.map((lesson, i) => {
-          const unlocked = isLessonUnlocked(lesson.id, completed)
+        {level.lessons.filter((lesson) => lesson.published !== false).map((lesson, i) => {
+          const unlocked = isLessonUnlocked(lesson.id, completed, levels)
           const result = completed[lesson.id]
           const row = (
             <div className={cn('flex items-center gap-4 rounded-2xl border bg-white p-4 transition-all', unlocked ? 'border-ink-100 hover:border-brand-300 hover:shadow-sm' : 'border-ink-100 opacity-60')}>
